@@ -4,7 +4,7 @@
       <el-tab-pane label="宏观数据">
         <home></home>
       </el-tab-pane>
-      <el-tab-pane label="申万">
+      <el-tab-pane label="指数">
         <sw-home></sw-home>
       </el-tab-pane>
     </el-tabs>

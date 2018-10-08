@@ -12,9 +12,9 @@ module.exports = {
     assetsPublicPath: '/',
     proxyTable: {
       '/macro': {
-        target: 'http://localhost:8080',
+        target: 'http://localhost:5000',
         pathRewrite: {
-          '^/macro': '/static/mock'
+          '^/macro': '/macro'
         }
       }
     },

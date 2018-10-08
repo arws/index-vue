@@ -74,8 +74,8 @@ export default {
       for (var i = 1; i <= activeSet.length; i++) {
         this.grid.push(
           {
-            top: ((i - 1) * Math.floor(100 / activeSet.length) + 2).toString() + '%',
-            height: Math.floor(100 / activeSet.length - 2).toString() + '%'
+            top: ((i - 1) * Math.floor(100 / activeSet.length) + 4).toString() + '%',
+            height: Math.floor(100 / activeSet.length - 4).toString() + '%'
           }
         )
       }
@@ -147,6 +147,7 @@ export default {
             margin-left 20%
             width 100px
     .chart-wrapper
+        border solid 1px
         width 1500px
         margin-left 300px
         margin-right 200px

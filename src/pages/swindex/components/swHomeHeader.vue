@@ -1,6 +1,6 @@
 <template>
     <div>
-        <p class="sw-header">申万指数</p>
+        <p class="sw-header">指数研究</p>
     </div>
 </template>
 

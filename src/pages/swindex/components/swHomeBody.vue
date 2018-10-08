@@ -1,8 +1,50 @@
 <template>
     <div>
-        <div class="chart-wrapper">
-            <ve-line v-bind:height="height" width="1500px" :tooltip="tooltip" :legend="legend" :data="chartData" :axisPointer="axisPointer" :grid="grid" :xAxis="xAxis" :yAxis="yAxis" :series="series" class="chart"/>
-        </div>
+        <el-container>
+          <el-aside width="400px">
+            <div class="input-area">
+              <el-input v-model="startDate" placeholder="起始日期 20150101" class="input-date">
+              </el-input>
+              <el-input v-model="endDate" placeholder="结束日期 20150101" class="input-date">
+              </el-input>
+              <div>
+                <el-button type="success" @click="recompute">重新计算</el-button>
+                <el-button type="success" @click="refresh">重置</el-button>'
+              </div>
+            </div>
+          </el-aside>
+          <el-main>
+            <el-row>
+              <el-col :span="18">
+                <div class="grid-content bg-purple">
+                  <ve-line v-bind:height="height" width="1200px" :dataZoom="dataZoom" :tooltip="tooltip" :legend="legend" :data="chartData" :axisPointer="axisPointer" :grid="grid" :xAxis="xAxis" :yAxis="yAxis" :series="series" class="chart"/>
+                </div>
+              </el-col>
+              <el-col :span="6">
+                <div class="grid-content bg-purple-light">
+                      <el-table
+                      :data="tableData"
+                      style="width: 100%">
+                      <el-table-column
+                        prop="rank"
+                        label="排名"
+                        width="120">
+                      </el-table-column>
+                      <el-table-column
+                        prop="name"
+                        label="指数名称"
+                        width="120">
+                      </el-table-column>
+                      <el-table-column
+                        prop="ret"
+                        label="区间收益率">
+                      </el-table-column>
+                    </el-table>
+                </div>
+              </el-col>
+            </el-row>
+          </el-main>
+        </el-container>
 
     </div>
 </template>
@@ -16,7 +58,10 @@ export default {
 
   data () {
     return {
-      height: '800px',
+      tableData: [],
+      startDate: '',
+      endDate: '',
+      height: '900px',
       chartData: {
       },
       dataset: [],
@@ -29,10 +74,17 @@ export default {
       xAxis: [],
       yAxis: [],
       series: [],
+      dataZoom: [{
+        type: 'slider',
+        show: true,
+        xAxisIndex: [0]
+      }, {
+        type: 'inside',
+        xAxisIndex: [0]
+      }],
       legend: {
         type: 'plain',
-        orient: 'vertical',
-        right: '0%',
+        orient: 'horizontal',
         top: '0%'
       },
       tooltip: {
@@ -44,12 +96,49 @@ export default {
     veLine: VeLine
   },
   methods: {
+    refresh: function () {
+      this.adjustgrid(this.dataset)
+      this.adjustXAxis(this.dataset)
+      this.adjustYAxis(this.dataset)
+      this.adjustSeries(this.dataset)
+    },
+    sortTableData: function () {
+      this.tableData.sort((x, y) => x.ret <= y.ret)
+      for (var k in this.tableData) {
+        this.tableData[k].rank = parseInt(k) + 1
+        this.tableData[k].ret = this.tableData[k].ret.toFixed(3).toString() + '%'
+      }
+    },
+    recompute: function () {
+      var startIdx = this.dataset[0].x.findIndex(d => d >= this.startDate)
+
+      var endIdx = this.dataset[0].x.findIndex(d => d > this.endDate) - 1
+
+      this.tableData = []
+      var activeDataSet = []
+      for (var i in this.dataset) {
+        this.tableData.push({
+          name: this.dataset[i].name,
+          ret: ((this.dataset[i].y[endIdx] / this.dataset[i].y[startIdx] - 1).toFixed(4) * 100)
+        })
+        activeDataSet.push({
+          name: this.dataset[i].name,
+          x: this.dataset[i].x.slice(startIdx, endIdx),
+          y: this.dataset[i].y.slice(startIdx, endIdx).map(s => s / this.dataset[i].y[startIdx])
+        })
+        this.adjustgrid(activeDataSet)
+        this.adjustXAxis(activeDataSet)
+        this.adjustYAxis(activeDataSet)
+        this.adjustSeries(activeDataSet)
+      }
+      this.sortTableData()
+    },
     adjustgrid: function (activeDataSet) {
       this.grid = []
 
       this.grid.push(
         {
-          top: '2%'
+          top: '15%'
         }
       )
     },
@@ -57,7 +146,10 @@ export default {
       this.xAxis = []
       this.xAxis.push({
         type: 'category',
-        data: activeDataSet[0].x
+        data: activeDataSet[0].x,
+        axisLabel: {
+          rotate: 45
+        }
       })
     },
     adjustYAxis: function (activeDataSet) {
@@ -77,7 +169,10 @@ export default {
         this.series.push({
           type: 'line',
           name: activeDataSet[i].name,
-          data: activeDataSet[i].y
+          data: activeDataSet[i].y,
+          symbol: 'none',
+          xAxisIndex: 0,
+          yAxisIndex: 0
         })
       }
     },
@@ -87,11 +182,21 @@ export default {
     loadData (res) {
       if (res && res.status === 200) {
         this.dataset = res.data.data
-        console.log(this.dataset[0].name)
+        for (var i in this.dataset) {
+          this.dataset[i].y = this.dataset[i].y.map(s => s / this.dataset[i].y[0])
+        }
         this.adjustgrid(this.dataset)
         this.adjustXAxis(this.dataset)
         this.adjustYAxis(this.dataset)
         this.adjustSeries(this.dataset)
+        this.tableData = []
+        for (var j in this.dataset) {
+          this.tableData.push({
+            name: this.dataset[j].name,
+            ret: ((this.dataset[j].y[this.dataset[j].y.length - 1] / this.dataset[j].y[0] - 1).toFixed(4) * 100)
+          })
+        }
+        this.sortTableData()
       }
     }
   },
@@ -102,18 +207,16 @@ export default {
 </script>
 
 <style lang="stylus" scoped>
-    .nav
-        float left
-        width 300px
-        line-height 20px
-        .check
-            margin-top 50%
-            margin-left 20%
-            width 100px
-    .chart-wrapper
-        width 1500px
-        margin-left 300px
-        margin-right 200px
-        .chart
-            margin-right 200px
+    .input-area
+      line-height 70px
+      margin-left 70px
+      margin-top 100px
+      .input-date
+        width 200px
+    .grid-content
+      border-radius 4px
+    .bg-purple
+      background: white
+    .bg-purple-light
+      background: #e5e9f2
 </style>
