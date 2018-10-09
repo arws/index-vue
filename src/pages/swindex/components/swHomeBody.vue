@@ -1,7 +1,7 @@
 <template>
     <div>
         <el-container>
-          <el-aside width="400px">
+          <el-aside width="250px">
             <div class="input-area">
               <el-input v-model="startDate" placeholder="起始日期 20150101" class="input-date">
               </el-input>
@@ -9,12 +9,12 @@
               </el-input>
               <div>
                 <el-button type="success" @click="recompute">重新计算</el-button>
-                <el-button type="success" @click="refresh">重置</el-button>'
+                <el-button type="success" @click="refresh">重置</el-button>
               </div>
             </div>
           </el-aside>
           <el-main>
-            <el-row>
+            <el-row gutter="20">
               <el-col :span="18">
                 <div class="grid-content bg-purple">
                   <ve-line v-bind:height="height" width="1200px" :dataZoom="dataZoom" :tooltip="tooltip" :legend="legend" :data="chartData" :axisPointer="axisPointer" :grid="grid" :xAxis="xAxis" :yAxis="yAxis" :series="series" class="chart"/>
@@ -97,10 +97,9 @@ export default {
   },
   methods: {
     refresh: function () {
-      this.adjustgrid(this.dataset)
-      this.adjustXAxis(this.dataset)
-      this.adjustYAxis(this.dataset)
-      this.adjustSeries(this.dataset)
+      var startIdx = 0
+      var endIdx = this.dataset[0].x.length - 1
+      this.recomputeRegion(startIdx, endIdx)
     },
     sortTableData: function () {
       this.tableData.sort((x, y) => x.ret <= y.ret)
@@ -113,7 +112,9 @@ export default {
       var startIdx = this.dataset[0].x.findIndex(d => d >= this.startDate)
 
       var endIdx = this.dataset[0].x.findIndex(d => d > this.endDate) - 1
-
+      this.recomputeRegion(startIdx, endIdx)
+    },
+    recomputeRegion: function (startIdx, endIdx) {
       this.tableData = []
       var activeDataSet = []
       for (var i in this.dataset) {
@@ -177,7 +178,7 @@ export default {
       }
     },
     getDataSet () {
-      axios.get(process.env.ROOT + '/macro/swindex.json').then(this.loadData)
+      axios.get(process.env.ROOT + '/data/swindex.json').then(this.loadData)
     },
     loadData (res) {
       if (res && res.status === 200) {
@@ -185,10 +186,11 @@ export default {
         for (var i in this.dataset) {
           this.dataset[i].y = this.dataset[i].y.map(s => s / this.dataset[i].y[0])
         }
-        this.adjustgrid(this.dataset)
-        this.adjustXAxis(this.dataset)
-        this.adjustYAxis(this.dataset)
-        this.adjustSeries(this.dataset)
+        this.recomputeRegion(0, 500)
+        // this.adjustgrid(this.dataset)
+        // this.adjustXAxis(this.dataset)
+        // this.adjustYAxis(this.dataset)
+        // this.adjustSeries(this.dataset)
         this.tableData = []
         for (var j in this.dataset) {
           this.tableData.push({
@@ -209,14 +211,12 @@ export default {
 <style lang="stylus" scoped>
     .input-area
       line-height 70px
-      margin-left 70px
+      margin-left 30px
       margin-top 100px
       .input-date
         width 200px
     .grid-content
       border-radius 4px
-    .bg-purple
-      background: white
-    .bg-purple-light
-      background: #e5e9f2
+      overflow scroll
+      width 100%
 </style>

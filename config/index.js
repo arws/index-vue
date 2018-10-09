@@ -11,10 +11,10 @@ module.exports = {
     assetsSubDirectory: 'static',
     assetsPublicPath: '/',
     proxyTable: {
-      '/macro': {
+      '/data': {
         target: 'http://localhost:5000',
         pathRewrite: {
-          '^/macro': '/macro'
+          '^/data': '/data'
         }
       }
     },

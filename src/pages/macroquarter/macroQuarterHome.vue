@@ -11,7 +11,7 @@ import homeHeader from './components/homeHeader'
 import homeBody from './components/homeBody'
 
 export default {
-  name: 'Home',
+  name: 'MacroQuarterHome',
   components: {
     homeHeader,
     homeBody

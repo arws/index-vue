@@ -1,6 +1,6 @@
 import Vue from 'vue'
 import Router from 'vue-router'
-import home from '@/pages/home/home'
+import mqhome from '@/pages/macroquarter/macroQuarterHome'
 import swindex from '@/pages/swindex/swhome'
 Vue.use(Router)
 
@@ -9,7 +9,7 @@ export default new Router({
     {
       path: '/',
       name: 'Home',
-      component: home
+      component: mqhome
     },
     {
       path: '/swindex',

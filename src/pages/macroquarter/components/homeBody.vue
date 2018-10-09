@@ -115,7 +115,7 @@ export default {
       }
     },
     getDataSet () {
-      axios.get(process.env.ROOT + '/macro/index.json').then(this.loadData)
+      axios.get(process.env.ROOT + '/data/index.json').then(this.loadData)
     },
     loadData (res) {
       if (res && res.status === 200) {
