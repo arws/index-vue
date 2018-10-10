@@ -1,14 +1,21 @@
 
 <template>
     <div>
-        猪周期
+        <pig-home-header></pig-home-header>
+        <pig-home-body></pig-home-body>
     </div>
 </template>
 
 <script>
-export default {
-  name: 'PigHome'
+import pigHomeHeader from './components/pigHomeHeader'
+import pigHomeBody from './components/pigHomeBody'
 
+export default {
+  name: 'PigHome',
+  components: {
+    pigHomeHeader,
+    pigHomeBody
+  }
 }
 </script>
 

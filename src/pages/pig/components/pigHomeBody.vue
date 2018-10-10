@@ -7,6 +7,10 @@
                 <el-checkbox :label="item"></el-checkbox>
               </div>
             </el-checkbox-group>
+            <!-- <div v-for="(item, idx) in indexes" :key="idx" class="check">
+                <input type="checkbox" :id="item" :value="item" v-model="activeIndex"/>
+                <label :for="item">{{item}}</label>
+            </div> -->
         </div>
         <div class="chart-wrapper">
             <ve-line v-bind:height="height" width="1500px" :data="chartData" :axisPointer="axisPointer" :grid="grid" :xAxis="xAxis" :yAxis="yAxis" :series="series" class="chart"/>
@@ -20,7 +24,7 @@ import VeLine from 'v-charts/lib/line.common'
 import axios from 'axios'
 
 export default {
-  name: 'homeBody',
+  name: 'pigHomeBody',
 
   data () {
     return {
@@ -111,11 +115,8 @@ export default {
         })
       }
     },
-    getDataSet () {
-
-    },
     reqData () {
-      axios.get(process.env.ROOT + '/data/macro').then(this.loadData)
+      axios.get(process.env.ROOT + '/data/pig').then(this.loadData)
       this.adjustgrid(this.dataset)
       this.adjustXAxis(this.dataset)
       this.adjustYAxis(this.dataset)
