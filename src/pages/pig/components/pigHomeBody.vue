@@ -116,7 +116,7 @@ export default {
       }
     },
     reqData () {
-      axios.get(process.env.ROOT + '/data/pig').then(this.loadData)
+      axios.get(process.env.ROOT + '/data/basic/pig').then(this.loadData)
       this.adjustgrid(this.dataset)
       this.adjustXAxis(this.dataset)
       this.adjustYAxis(this.dataset)

@@ -29,6 +29,17 @@
           <el-button icon="el-icon-plus" @click="addMacro" circle></el-button>
         </div>
         <div class="inline-cas">
+          <p class="inline-label">金融市场</p>
+          <el-cascader
+            expand-trigger="hover"
+            :options="dataName.financialMarketName"
+            v-model="financialMarketQueryString"
+            @change="handleBasicChange"
+            class="inline-cascader">
+          </el-cascader>
+          <el-button icon="el-icon-plus" @click="addFinancialMarket" circle></el-button>
+        </div>
+        <div class="inline-cas">
           <p class="inline-label">基本面数据</p>
           <el-cascader
             expand-trigger="hover"
@@ -90,11 +101,13 @@ export default {
       indexQueryString: '',
       stockQueryString: '',
       basicQueryString: [],
+      financialMarketQueryString: [],
       dataName: {
         macroName: [],
         indexName: [],
         basicName: [],
-        stockName: []
+        stockName: [],
+        financialMarketName: []
       }
     }
   },
@@ -192,15 +205,131 @@ export default {
       cb(this.dataName.macroName)
     },
     addMacro: function () {
-      axios.get(process.env.ROOT + '/data/macro/quarter/' + this.macroQueryString[1]).then(this.loadData)
+      switch (this.macroQueryString[0]) {
+        case '国内宏观':
+          switch (this.macroQueryString[1]) {
+            case '消费':
+              axios.get(process.env.ROOT + '/data/macro/consume/single/' + this.macroQueryString[2]).then(this.loadData)
+              break
+            case '总量':
+              axios.get(process.env.ROOT + '/data/macro/gross/single/' + this.macroQueryString[2]).then(this.loadData)
+              break
+            case '信贷':
+              axios.get(process.env.ROOT + '/data/macro/credit/single/' + this.macroQueryString[2]).then(this.loadData)
+              break
+            case '国际贸易':
+              axios.get(process.env.ROOT + '/data/macro/internationaltrade/single/' + this.macroQueryString[2]).then(this.loadData)
+              break
+            case '投资':
+              axios.get(process.env.ROOT + '/data/macro/investment/single/' + this.macroQueryString[2]).then(this.loadData)
+              break
+            case '货币政策':
+              axios.get(process.env.ROOT + '/data/macro/money/single/' + this.macroQueryString[2]).then(this.loadData)
+              break
+            case '财政':
+              axios.get(process.env.ROOT + '/data/macro/publicfinance/single/' + this.macroQueryString[2]).then(this.loadData)
+              break
+            default:
+              break
+          }
+          break
+        default:
+          break
+      }
     },
     addMacroName: function (res) {
       if (res && res.data) {
-        this.dataName.macroName.push({
-          value: '国内宏观',
-          label: '国内宏观',
-          children: res.data.data
-        })
+        if (res.data.SubCategory) {
+          var idx = this.dataName.macroName.findIndex(x => x.value === res.data.Category)
+          if (this.dataName.macroName.findIndex(x => x.value === res.data.Category) === -1) {
+            this.dataName.macroName.push({
+              value: res.data.Category,
+              label: res.data.Category,
+              children: [{
+                value: res.data.SubCategory,
+                label: res.data.SubCategory,
+                children: res.data.data
+              }]
+            })
+          } else {
+            if (this.dataName.macroName[idx].children.findIndex(x => x.value === res.data.SubCategory) === -1) {
+              this.dataName.macroName[idx].children.push({
+                value: res.data.SubCategory,
+                label: res.data.SubCategory,
+                children: res.data.data
+              })
+            } else {
+              this.dataName.macroName[idx].children[this.dataName.macroName[idx].children.findIndex(x => x.value === res.data.SubCategory)].children.concat(res.data.data)
+            }
+          }
+        } else {
+          this.dataName.macroName.push({
+            value: res.data.Category,
+            label: res.data.Category,
+            children: res.data.data
+          })
+        }
+      }
+    },
+    financialMarketSearch: function (queryString, cb) {
+      cb(this.dataName.macroName)
+    },
+    addFinancialMarket: function () {
+      switch (this.financialMarketQueryString[0]) {
+        case '金融市场':
+          switch (this.financialMarketQueryString[1]) {
+            case '债券':
+              axios.get(process.env.ROOT + '/data/financialmarket/bond/single/' + this.financialMarketQueryString[2]).then(this.loadData)
+              break
+            case '权益':
+              axios.get(process.env.ROOT + '/data/financialmarket/equity/single/' + this.financialMarketQueryString[2]).then(this.loadData)
+              break
+            case '外汇':
+              axios.get(process.env.ROOT + '/data/financialmarket/exchange/single/' + this.financialMarketQueryString[2]).then(this.loadData)
+              break
+            case '银行间市场':
+              axios.get(process.env.ROOT + '/data/financialmarket/interbank/single/' + this.financialMarketQueryString[2]).then(this.loadData)
+              break
+            default:
+              break
+          }
+          break
+        default:
+          break
+      }
+    },
+    addfinancialMarketName: function (res) {
+      if (res && res.data) {
+        if (res.data.SubCategory) {
+          var idx = this.dataName.financialMarketName.findIndex(x => x.value === res.data.Category)
+          if (this.dataName.financialMarketName.findIndex(x => x.value === res.data.Category) === -1) {
+            this.dataName.financialMarketName.push({
+              value: res.data.Category,
+              label: res.data.Category,
+              children: [{
+                value: res.data.SubCategory,
+                label: res.data.SubCategory,
+                children: res.data.data
+              }]
+            })
+          } else {
+            if (this.dataName.financialMarketName[idx].children.findIndex(x => x.value === res.data.SubCategory) === -1) {
+              this.dataName.financialMarketName[idx].children.push({
+                value: res.data.SubCategory,
+                label: res.data.SubCategory,
+                children: res.data.data
+              })
+            } else {
+              this.dataName.financialMarketName[idx].children[this.dataName.financialMarketName[idx].children.findIndex(x => x.value === res.data.SubCategory)].children.concat(res.data.data)
+            }
+          }
+        } else {
+          this.dataName.financialMarketName.push({
+            value: res.data.Category,
+            label: res.data.Category,
+            children: res.data.data
+          })
+        }
       }
     },
     indexSearch (queryString, cb) {
@@ -238,24 +367,69 @@ export default {
       cb(this.dataName.basicName)
     },
     addBasic () {
-      if (this.basicQueryString[0] === '猪周期') {
-        axios.get(process.env.ROOT + '/data/pig/single/' + this.basicQueryString[1]).then(this.loadData)
+      switch (this.basicQueryString[0]) {
+        case '猪周期':
+          axios.get(process.env.ROOT + '/data/basic/pig/single/' + this.basicQueryString[1]).then(this.loadData)
+          break
+        default:
+          break
       }
     },
-    addPigName (res) {
+    addBasicName (res) {
+      // console.log('收到')
       if (res && res.data) {
-        this.dataName.basicName.push({
-          value: '猪周期',
-          label: '猪周期',
-          children: res.data.data
-        })
+        if (res.data.SubCategory) {
+          var idx = this.dataName.basicName.findIndex(x => x.value === res.data.Category)
+          if (this.dataName.basicName.findIndex(x => x.value === res.data.Category) === -1) {
+            this.dataName.basicName.push({
+              value: res.data.Category,
+              label: res.data.Category,
+              children: [{
+                value: res.data.SubCategory,
+                label: res.data.SubCategory,
+                children: res.data.data
+              }]
+            })
+          } else {
+            if (this.dataName.basicName[idx].children.findIndex(x => x.value === res.data.SubCategory) === -1) {
+              this.dataName.basicName[idx].children.push({
+                value: res.data.SubCategory,
+                label: res.data.SubCategory,
+                children: res.data.data
+              })
+            } else {
+              this.dataName.basicName[idx].children[this.dataName.basicName[idx].children.findIndex(x => x.value === res.data.SubCategory)].children.concat(res.data.data)
+            }
+            // console.log(res.data.data)
+            // console.log(this.dataName.basicName[idx].children)
+          }
+        } else {
+          this.dataName.basicName.push({
+            value: res.data.Category,
+            label: res.data.Category,
+            children: res.data.data
+          })
+        }
       }
     },
     loadName: function () {
-      axios.get(process.env.ROOT + '/data/macro/name').then(this.addMacroName)
+      // axios.get(process.env.ROOT + '/data/macro/quarter/name').then(this.addMacroName)
       axios.get(process.env.ROOT + '/data/index/name').then(this.addIndexName)
-      axios.get(process.env.ROOT + '/data/pig/name').then(this.addPigName)
+      axios.get(process.env.ROOT + '/data/basic/pig/name').then(this.addBasicName)
       axios.get(process.env.ROOT + '/data/stock/name').then(this.addStockName)
+
+      axios.get(process.env.ROOT + '/data/financialmarket/interbank/name').then(this.addfinancialMarketName)
+      axios.get(process.env.ROOT + '/data/financialmarket/bond/name').then(this.addfinancialMarketName)
+      axios.get(process.env.ROOT + '/data/financialmarket/equity/name').then(this.addfinancialMarketName)
+      axios.get(process.env.ROOT + '/data/financialmarket/exchange/name').then(this.addfinancialMarketName)
+
+      axios.get(process.env.ROOT + '/data/macro/consume/name').then(this.addMacroName)
+      axios.get(process.env.ROOT + '/data/macro/credit/name').then(this.addMacroName)
+      axios.get(process.env.ROOT + '/data/macro/gross/name').then(this.addMacroName)
+      axios.get(process.env.ROOT + '/data/macro/internationaltrade/name').then(this.addMacroName)
+      axios.get(process.env.ROOT + '/data/macro/investment/name').then(this.addMacroName)
+      axios.get(process.env.ROOT + '/data/macro/money/name').then(this.addMacroName)
+      axios.get(process.env.ROOT + '/data/macro/publicfinance/name').then(this.addMacroName)
     }
   },
   mounted: function () {
