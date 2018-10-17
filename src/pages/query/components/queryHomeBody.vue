@@ -62,6 +62,7 @@ export default {
   name: 'queryHomeBody',
   data () {
     return {
+      height: '',
       dataset: [],
       activeIndex: [],
       indexes: [],

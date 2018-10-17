@@ -7,6 +7,9 @@
       <el-tab-pane label="证券指数">
         <sw-home></sw-home>
       </el-tab-pane>
+      <el-tab-pane label="证券个股">
+        <stock-home></stock-home>
+      </el-tab-pane>
       <el-tab-pane label="猪周期">
         <pig-home></pig-home>
       </el-tab-pane>
@@ -22,13 +25,16 @@ import mqHome from './pages/macroquarter/macroQuarterHome'
 import swHome from './pages/swindex/swhome'
 import pigHome from './pages/pig/pigHome'
 import queryHome from './pages/query/queryHome'
+import stockHome from './pages/stock/stockHome'
+
 export default {
   name: 'App',
   components: {
     mqHome,
     swHome,
     pigHome,
-    queryHome
+    queryHome,
+    stockHome
   }
 }
 </script>
