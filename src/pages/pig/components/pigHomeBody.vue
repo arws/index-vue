@@ -150,7 +150,6 @@ export default {
             margin-left 20%
             width 100px
     .chart-wrapper
-        border solid 1px
         width 1500px
         margin-left 300px
         margin-right 200px

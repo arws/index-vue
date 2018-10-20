@@ -244,18 +244,6 @@ export default {
           this.dataset[i].y = this.dataset[i].y.map(s => s / this.dataset[i].y[0])
         }
         this.recompute()
-        // this.adjustgrid(this.dataset)
-        // this.adjustXAxis(this.dataset)
-        // this.adjustYAxis(this.dataset)
-        // this.adjustSeries(this.dataset)
-        // this.tableData = []
-        // for (var j in this.dataset) {
-        //   this.tableData.push({
-        //     name: this.dataset[j].name,
-        //     ret: ((this.dataset[j].y[this.dataset[j].y.length - 1] / this.dataset[j].y[0] - 1).toFixed(4) * 100)
-        //   })
-        // }
-        // this.sortTableData()
       }
     }
   },
