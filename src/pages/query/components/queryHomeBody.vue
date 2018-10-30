@@ -493,7 +493,7 @@ export default {
     },
     addFinancialMarket: function () {
       switch (this.financialMarketQueryString[0]) {
-        case '金融市场':
+        case '中国金融市场':
           switch (this.financialMarketQueryString[1]) {
             case '债券':
               axios.get(process.env.ROOT + '/data/financialmarket/bond/single/' + this.financialMarketQueryString[2]).then(this.loadData)

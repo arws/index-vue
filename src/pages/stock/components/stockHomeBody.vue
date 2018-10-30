@@ -233,7 +233,7 @@ export default {
       // cb(this.dataName.indexName)
     },
     addIndex () {
-      axios.get(process.env.ROOT + '/data/index/single/' + this.indexQueryString).then(this.loadData)
+      axios.get(process.env.ROOT + '/data/financialmarket/index/single/' + this.indexQueryString).then(this.loadData)
     },
     addIndexName (res) {
       if (res && res.data) {
@@ -256,7 +256,7 @@ export default {
       }
     },
     loadName: function () {
-      axios.get(process.env.ROOT + '/data/index/name').then(this.addIndexName)
+      axios.get(process.env.ROOT + '/data/financialmarket/index/name').then(this.addIndexName)
       axios.get(process.env.ROOT + '/data/stock/name').then(this.addStockName)
     }
   },
