@@ -24,6 +24,7 @@
             :options="dataName.macroName"
             v-model="macroQueryString"
             @change="handleBasicChange"
+            :show-all-levels="false"
             class="inline-cascader">
           </el-cascader>
           <el-button icon="el-icon-plus" @click="addMacro" circle></el-button>
@@ -35,9 +36,22 @@
             :options="dataName.financialMarketName"
             v-model="financialMarketQueryString"
             @change="handleBasicChange"
+            :show-all-levels="false"
             class="inline-cascader">
           </el-cascader>
           <el-button icon="el-icon-plus" @click="addFinancialMarket" circle></el-button>
+        </div>
+        <div class="inline-cas">
+          <p class="inline-label">行业</p>
+          <el-cascader
+            expand-trigger="hover"
+            :options="dataName.industryName"
+            v-model="industryQueryString"
+            @change="handleBasicChange"
+            :show-all-levels="false"
+            class="inline-cascader">
+          </el-cascader>
+          <el-button icon="el-icon-plus" @click="addIndustry" circle></el-button>
         </div>
         <div class="inline-cas">
           <p class="inline-label">基本面数据</p>
@@ -46,6 +60,7 @@
             :options="dataName.basicName"
             v-model="basicQueryString"
             @change="handleBasicChange"
+            :show-all-levels="false"
             class="inline-cascader">
           </el-cascader>
           <el-button icon="el-icon-plus" @click="addBasic" circle></el-button>
@@ -111,12 +126,14 @@ export default {
       indexQueryString: '',
       stockQueryString: '',
       basicQueryString: [],
+      industryQueryString: [],
       financialMarketQueryString: [],
       dataName: {
         macroName: [],
         indexName: [],
         basicName: [],
         stockName: [],
+        industryName: [],
         financialMarketName: []
       }
     }
@@ -494,6 +511,9 @@ export default {
               break
           }
           break
+        case '美国金融市场':
+          axios.get(process.env.ROOT + '/data/financialmarket/america/single/' + this.financialMarketQueryString[1]).then(this.loadData)
+          break
         default:
           break
       }
@@ -541,7 +561,7 @@ export default {
       // cb(this.dataName.indexName)
     },
     addIndex () {
-      axios.get(process.env.ROOT + '/data/index/single/' + this.indexQueryString).then(this.loadData)
+      axios.get(process.env.ROOT + '/data/financialmarket/index/single/' + this.indexQueryString).then(this.loadData)
     },
     addIndexName (res) {
       if (res && res.data) {
@@ -568,14 +588,17 @@ export default {
     },
     addBasic () {
       switch (this.basicQueryString[0]) {
-        case '猪周期':
-          axios.get(process.env.ROOT + '/data/basic/pig/single/' + this.basicQueryString[1]).then(this.loadData)
+        case '主要工业品价格':
+          axios.get(process.env.ROOT + '/data/basic/industryproductprice/single/' + this.basicQueryString[1]).then(this.loadData)
           break
-        case '房地产':
-          axios.get(process.env.ROOT + '/data/basic/realestate/single/' + this.basicQueryString[1]).then(this.loadData)
+        case '主要工业品当月产量':
+          axios.get(process.env.ROOT + '/data/basic/industryproductproduction/single/' + this.basicQueryString[1]).then(this.loadData)
+          break
+        case '主要工业品累计产量':
+          axios.get(process.env.ROOT + '/data/basic/industryproductproductionaccumulate/single/' + this.basicQueryString[1]).then(this.loadData)
           break
         case '实体经济':
-          axios.get(process.env.ROOT + '/data/basic/realeco/single/' + this.basicQueryString[1]).then(this.loadData)
+          axios.get(process.env.ROOT + '/data/basic/macrobasic/single/' + this.basicQueryString[1]).then(this.loadData)
           break
         case '大宗商品':
           switch (this.basicQueryString[1]) {
@@ -627,22 +650,131 @@ export default {
         }
       }
     },
+    industrySearch (queryString, cb) {
+      cb(this.dataName.industryName)
+    },
+    addIndustry () {
+      switch (this.industryQueryString[0]) {
+        case '猪周期':
+          axios.get(process.env.ROOT + '/data/industry/pig/single/' + this.industryQueryString[1]).then(this.loadData)
+          break
+        case '房地产':
+          axios.get(process.env.ROOT + '/data/industry/realestate/single/' + this.industryQueryString[1]).then(this.loadData)
+          break
+        case '汽车':
+          axios.get(process.env.ROOT + '/data/industry/car/single/' + this.industryQueryString[1]).then(this.loadData)
+          break
+        case '煤炭':
+          axios.get(process.env.ROOT + '/data/industry/coal/single/' + this.industryQueryString[1]).then(this.loadData)
+          break
+        case '钢铁':
+          axios.get(process.env.ROOT + '/data/industry/steel/single/' + this.industryQueryString[1]).then(this.loadData)
+          break
+        case '新能源电池材料':
+          axios.get(process.env.ROOT + '/data/industry/newenergymaterial/single/' + this.industryQueryString[1]).then(this.loadData)
+          break
+        case '化工':
+          switch (this.industryQueryString[1]) {
+            case '农用化工':
+              axios.get(process.env.ROOT + '/data/industry/chem/agrichem/single/' + this.industryQueryString[2]).then(this.loadData)
+              break
+            case '民爆':
+              axios.get(process.env.ROOT + '/data/industry/chem/blast/single/' + this.industryQueryString[2]).then(this.loadData)
+              break
+            case '聚酯纤维':
+              axios.get(process.env.ROOT + '/data/industry/chem/fiber/single/' + this.industryQueryString[2]).then(this.loadData)
+              break
+            case '聚氨酯':
+              axios.get(process.env.ROOT + '/data/industry/chem/mdi/single/' + this.industryQueryString[2]).then(this.loadData)
+              break
+            case '化工原料':
+              axios.get(process.env.ROOT + '/data/industry/chem/organicraw/single/' + this.industryQueryString[2]).then(this.loadData)
+              break
+            case '石油化工':
+              axios.get(process.env.ROOT + '/data/industry/chem/petroleum/single/' + this.industryQueryString[2]).then(this.loadData)
+              break
+            case '塑模':
+              axios.get(process.env.ROOT + '/data/industry/chem/plastic/single/' + this.industryQueryString[2]).then(this.loadData)
+              break
+            case '橡胶':
+              axios.get(process.env.ROOT + '/data/industry/chem/rubber/single/' + this.industryQueryString[2]).then(this.loadData)
+              break
+            default:
+              break
+          }
+          break
+        default:
+          break
+      }
+    },
+    addIndustryName (res) {
+      if (res && res.data) {
+        if (res.data.SubCategory) {
+          var idx = this.dataName.industryName.findIndex(x => x.value === res.data.Category)
+          if (this.dataName.industryName.findIndex(x => x.value === res.data.Category) === -1) {
+            this.dataName.industryName.push({
+              value: res.data.Category,
+              label: res.data.Category,
+              children: [{
+                value: res.data.SubCategory,
+                label: res.data.SubCategory,
+                children: res.data.data
+              }]
+            })
+          } else {
+            if (this.dataName.industryName[idx].children.findIndex(x => x.value === res.data.SubCategory) === -1) {
+              this.dataName.industryName[idx].children.push({
+                value: res.data.SubCategory,
+                label: res.data.SubCategory,
+                children: res.data.data
+              })
+            } else {
+              this.dataName.industryName[idx].children[this.dataName.industryName[idx].children.findIndex(x => x.value === res.data.SubCategory)].children.concat(res.data.data)
+            }
+          }
+        } else {
+          this.dataName.industryName.push({
+            value: res.data.Category,
+            label: res.data.Category,
+            children: res.data.data
+          })
+        }
+      }
+    },
     loadName: function () {
       // axios.get(process.env.ROOT + '/data/macro/quarter/name').then(this.addMacroName)
-      axios.get(process.env.ROOT + '/data/index/name').then(this.addIndexName)
+      axios.get(process.env.ROOT + '/data/financialmarket/index/name').then(this.addIndexName)
       axios.get(process.env.ROOT + '/data/stock/name').then(this.addStockName)
 
-      axios.get(process.env.ROOT + '/data/basic/pig/name').then(this.addBasicName)
-      axios.get(process.env.ROOT + '/data/basic/realeco/name').then(this.addBasicName)
-      axios.get(process.env.ROOT + '/data/basic/realestate/name').then(this.addBasicName)
+      axios.get(process.env.ROOT + '/data/basic/macrobasic/name').then(this.addBasicName)
+      axios.get(process.env.ROOT + '/data/basic/industryproductprice/name').then(this.addBasicName)
+      axios.get(process.env.ROOT + '/data/basic/industryproductproduction/name').then(this.addBasicName)
+      axios.get(process.env.ROOT + '/data/basic/industryproductproductionaccumulate/name').then(this.addBasicName)
 
       axios.get(process.env.ROOT + '/data/commodity/global/name').then(this.addBasicName)
       axios.get(process.env.ROOT + '/data/commodity/domestic/name').then(this.addBasicName)
+
+      axios.get(process.env.ROOT + '/data/industry/pig/name').then(this.addIndustryName)
+      axios.get(process.env.ROOT + '/data/industry/realestate/name').then(this.addIndustryName)
+      axios.get(process.env.ROOT + '/data/industry/car/name').then(this.addIndustryName)
+      axios.get(process.env.ROOT + '/data/industry/coal/name').then(this.addIndustryName)
+      axios.get(process.env.ROOT + '/data/industry/steel/name').then(this.addIndustryName)
+      axios.get(process.env.ROOT + '/data/industry/newenergymaterial/name').then(this.addIndustryName)
+
+      axios.get(process.env.ROOT + '/data/industry/chem/agrichem/name').then(this.addIndustryName)
+      axios.get(process.env.ROOT + '/data/industry/chem/blast/name').then(this.addIndustryName)
+      axios.get(process.env.ROOT + '/data/industry/chem/fiber/name').then(this.addIndustryName)
+      axios.get(process.env.ROOT + '/data/industry/chem/mdi/name').then(this.addIndustryName)
+      axios.get(process.env.ROOT + '/data/industry/chem/organicraw/name').then(this.addIndustryName)
+      axios.get(process.env.ROOT + '/data/industry/chem/petroleum/name').then(this.addIndustryName)
+      axios.get(process.env.ROOT + '/data/industry/chem/plastic/name').then(this.addIndustryName)
+      axios.get(process.env.ROOT + '/data/industry/chem/rubber/name').then(this.addIndustryName)
 
       axios.get(process.env.ROOT + '/data/financialmarket/interbank/name').then(this.addfinancialMarketName)
       axios.get(process.env.ROOT + '/data/financialmarket/bond/name').then(this.addfinancialMarketName)
       axios.get(process.env.ROOT + '/data/financialmarket/equity/name').then(this.addfinancialMarketName)
       axios.get(process.env.ROOT + '/data/financialmarket/exchange/name').then(this.addfinancialMarketName)
+      axios.get(process.env.ROOT + '/data/financialmarket/america/name').then(this.addfinancialMarketName)
 
       axios.get(process.env.ROOT + '/data/macro/consume/name').then(this.addMacroName)
       axios.get(process.env.ROOT + '/data/macro/credit/name').then(this.addMacroName)
@@ -653,7 +785,6 @@ export default {
       axios.get(process.env.ROOT + '/data/macro/publicfinance/name').then(this.addMacroName)
 
       axios.get(process.env.ROOT + '/data/macro/america/consume/name').then(this.addMacroName)
-      axios.get(process.env.ROOT + '/data/macro/america/financialmarket/name').then(this.addMacroName)
       axios.get(process.env.ROOT + '/data/macro/america/gross/name').then(this.addMacroName)
       axios.get(process.env.ROOT + '/data/macro/america/internationaltrade/name').then(this.addMacroName)
       axios.get(process.env.ROOT + '/data/macro/america/job/name').then(this.addMacroName)
