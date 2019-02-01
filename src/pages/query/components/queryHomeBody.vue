@@ -416,6 +416,9 @@ export default {
             case '财政':
               axios.get(process.env.ROOT + '/data/macro/publicfinance/single/' + this.macroQueryString[2]).then(this.loadData)
               break
+            case '资本流动':
+              axios.get(process.env.ROOT + '/data/macro/capitalflow/single/' + this.macroQueryString[2]).then(this.loadData)
+              break
             default:
               break
           }
@@ -670,6 +673,15 @@ export default {
         case '钢铁':
           axios.get(process.env.ROOT + '/data/industry/steel/single/' + this.industryQueryString[1]).then(this.loadData)
           break
+        case '基本金属':
+          axios.get(process.env.ROOT + '/data/industry/metal/single/' + this.industryQueryString[1]).then(this.loadData)
+          break
+        case '小金属':
+          axios.get(process.env.ROOT + '/data/industry/smallmetal/single/' + this.industryQueryString[1]).then(this.loadData)
+          break
+        case '建材':
+          axios.get(process.env.ROOT + '/data/industry/buildmaterial/single/' + this.industryQueryString[1]).then(this.loadData)
+          break
         case '新能源电池材料':
           axios.get(process.env.ROOT + '/data/industry/newenergymaterial/single/' + this.industryQueryString[1]).then(this.loadData)
           break
@@ -760,6 +772,9 @@ export default {
       axios.get(process.env.ROOT + '/data/industry/coal/name').then(this.addIndustryName)
       axios.get(process.env.ROOT + '/data/industry/steel/name').then(this.addIndustryName)
       axios.get(process.env.ROOT + '/data/industry/newenergymaterial/name').then(this.addIndustryName)
+      axios.get(process.env.ROOT + '/data/industry/metal/name').then(this.addIndustryName)
+      axios.get(process.env.ROOT + '/data/industry/smallmetal/name').then(this.addIndustryName)
+      axios.get(process.env.ROOT + '/data/industry/buildmaterial/name').then(this.addIndustryName)
 
       axios.get(process.env.ROOT + '/data/industry/chem/agrichem/name').then(this.addIndustryName)
       axios.get(process.env.ROOT + '/data/industry/chem/blast/name').then(this.addIndustryName)
@@ -776,6 +791,7 @@ export default {
       axios.get(process.env.ROOT + '/data/financialmarket/exchange/name').then(this.addfinancialMarketName)
       axios.get(process.env.ROOT + '/data/financialmarket/america/name').then(this.addfinancialMarketName)
 
+      axios.get(process.env.ROOT + '/data/macro/capitalflow/name').then(this.addMacroName)
       axios.get(process.env.ROOT + '/data/macro/consume/name').then(this.addMacroName)
       axios.get(process.env.ROOT + '/data/macro/credit/name').then(this.addMacroName)
       axios.get(process.env.ROOT + '/data/macro/gross/name').then(this.addMacroName)

@@ -119,16 +119,39 @@ export default {
     activeIndex: function (val, old) {
       // 检查当前有哪些active指标
       // 找出Active的DataSet
-      for (var i in this.dataset) {
-        if (val.indexOf(this.dataset[i].name) === -1) {
-          this.deletedDataset.push(this.dataset[i])
-          this.dataset.splice(i, 1)
+      var l = this.dataset.length
+      while (l--) {
+        if (val.indexOf(this.dataset[l].name) === -1) {
+          var deleted = false
+          for (var k in this.deletedDataset) {
+            if (this.deletedDataset[k].name === this.dataset[l].name) {
+              deleted = true
+            }
+          }
+          if (!deleted) {
+            this.deletedDataset.push(this.dataset[l])
+          }
+          this.dataset.splice(l, 1)
         }
       }
+      // for (var i in this.dataset) {
+      //   if (val.indexOf(this.dataset[i].name) === -1) {
+      //     this.deletedDataset.push(this.dataset[i])
+      //     this.dataset.splice(i, 1)
+      //   }
+      // }
 
       for (var j in this.deletedDataset) {
         if (val.indexOf(this.deletedDataset[j].name) !== -1) {
-          this.dataset.push(this.deletedDataset[j])
+          var existed = false
+          for (var w in this.dataset) {
+            if (this.dataset[w].name === this.deletedDataset[j].name) {
+              existed = true
+            }
+          }
+          if (!existed) {
+            this.dataset.push(this.deletedDataset[j])
+          }
         }
       }
       this.recompute()
